@@ -8,6 +8,7 @@ const roomRoutes = require('./routes/rooms');
 const reservationRoutes = require('./routes/reservations');
 
 require('dotenv').config();
+require('./config/passport');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,15 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes
 app.use('/api/auth', authRoutes);
