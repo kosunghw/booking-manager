@@ -20,14 +20,6 @@ pool.connect((err, client, release) => {
   console.log('Connected to the database');
   release();
 });
-
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Database connection error', err.stack);
-  } else {
-    console.log('Database connected:', res.rows[0]);
-  }
-});
 // Error handling
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);

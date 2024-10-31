@@ -1,5 +1,5 @@
 const userModel = require('../models/User');
-const { generatePassword } = require('../config/passwordUtils');
+const { generatePassword, validPassword } = require('../config/passwordUtils');
 
 const userController = {
   createUser: async (req, res) => {
@@ -35,8 +35,28 @@ const userController = {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      res.json(booking);
+      res.json(user);
     } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  loginUser: async (req, res) => {
+    try {
+      console.log(req.body);
+      const user = await userModel.getByName(req.body.username);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      const password = user.password_hash;
+      const isUserValid = validPassword(req.body.password, password);
+      if (!isUserValid) {
+        return res.status(401).json({ message: 'Password is not correct' });
+      }
+      req.session.userId = user.user_id;
+      res.status(200).json(user);
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: error.message });
     }
   },
