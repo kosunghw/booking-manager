@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSignIn } from 'react-auth-kit';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [formValue, setFormValue] = useState({
@@ -6,6 +8,8 @@ export default function Login() {
     password: '',
   });
   const [message, setMessage] = useState('');
+  const signIn = useSignIn();
+  const navigate = useNavigate();
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -14,26 +18,38 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const allInputvalue = {
-      username: formValue.username,
-      password: formValue.password,
-    };
+    setMessage('');
 
-    let res = await fetch('http://localhost:5000/api/users/login', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(allInputvalue),
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(formValue),
+      });
 
-    let resjson = await res.json();
-    console.log(resjson);
-    if (res.status === 200) {
-      setMessage(resjson.success);
-      console.log('log in successful');
-    } else {
-      setMessage('Some error occurred');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      if (
+        signIn({
+          token: 'session',
+          expiresIn: 1000 * 60 * 60 * 24 * 7,
+          tokenType: 'Cookie',
+          authState: data.user,
+        })
+      ) {
+        // Successful login
+        navigate('/dashboard');
+      } else {
+        throw new Error('Sign in failed');
+      }
+    } catch (err) {
+      setMessage(err.message);
     }
-    // console.log(allInputvalue);
   };
   return (
     <>

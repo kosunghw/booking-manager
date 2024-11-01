@@ -30,6 +30,7 @@ const userController = {
   },
 
   getUserById: async (req, res) => {
+    if (req.params.userId !== req.user.id);
     try {
       const user = await userModel.getById(req.params.id);
       if (!user) {
@@ -41,25 +42,25 @@ const userController = {
     }
   },
 
-  loginUser: async (req, res) => {
-    try {
-      console.log(req.body);
-      const user = await userModel.getByName(req.body.username);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      const password = user.password_hash;
-      const isUserValid = validPassword(req.body.password, password);
-      if (!isUserValid) {
-        return res.status(401).json({ message: 'Password is not correct' });
-      }
-      req.session.userId = user.user_id;
-      res.status(200).json(user);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
-    }
-  },
+  // loginUser: async (req, res) => {
+  //   try {
+  //     console.log(req.body);
+  //     const user = await userModel.getByName(req.body.username);
+  //     if (!user) {
+  //       return res.status(404).json({ message: 'User not found' });
+  //     }
+  //     const password = user.password_hash;
+  //     const isUserValid = validPassword(req.body.password, password);
+  //     if (!isUserValid) {
+  //       return res.status(401).json({ message: 'Password is not correct' });
+  //     }
+  //     req.session.userId = user.user_id;
+  //     res.status(200).json(user);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: error.message });
+  //   }
+  // },
 
   updateUser: async (req, res) => {
     try {
@@ -73,7 +74,7 @@ const userController = {
     }
   },
 
-  deleteBooking: async (req, res) => {
+  deleteUser: async (req, res) => {
     try {
       const user = await userModel.delete(req.params.id);
       if (!user) {

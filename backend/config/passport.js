@@ -12,13 +12,14 @@ const verifyCallback = async (username, password, done) => {
 
     const user = res.rows[0];
 
-    if (!user || !user.password_hash || user.salt) {
-      return done(null, false);
+    if (!user || !user.password_hash) {
+      return done(null, false, { message: 'Incorrect username or password' });
     }
 
-    const isValid = validPassword(password, user.password_hash, user.salt);
+    const isValid = validPassword(password, user.password_hash);
 
     if (isValid) {
+      console.log('authentication complete!');
       return done(null, user);
     } else {
       return done(null, false);
@@ -26,29 +27,31 @@ const verifyCallback = async (username, password, done) => {
   } catch (err) {
     done(err);
   }
-
-  const strategy = new LocalStrategy(
-    {
-      usernameField: 'username',
-      passwordField: 'password',
-    },
-    verifyCallback
-  );
-
-  passport.use(strategy);
-
-  passport.serializeUser((user, done) => {
-    done(null, user.user_id);
-  });
-
-  passport.deserializeUser(async (userId, done) => {
-    try {
-      const query = `SELECT * FROM users WHERE id = $1`;
-      const values = [userId];
-      const res = await pgPool.query(query, values);
-      done(null, res.rows[0]); // Return the user object
-    } catch (err) {
-      done(err, null);
-    }
-  });
 };
+
+const strategy = new LocalStrategy(
+  {
+    usernameField: 'username',
+    passwordField: 'password',
+  },
+  verifyCallback
+);
+
+passport.use(strategy);
+
+passport.serializeUser((user, done) => {
+  done(null, user.user_id);
+});
+
+passport.deserializeUser(async (userId, done) => {
+  try {
+    const query = `SELECT * FROM users WHERE user_id = $1`;
+    const values = [userId];
+    const res = await pgPool.query(query, values);
+    done(null, res.rows[0]); // Return the user object
+  } catch (err) {
+    done(err, null);
+  }
+});
+
+module.exports = passport;
