@@ -20,6 +20,7 @@ router.post('/logout', (req, res, next) => {
       console.log('Logout Error:', err);
       return res.status(500).json({ message: 'Error logging out' });
     }
+    res.clearCookie('userid');
     res.json({ message: 'Logged out successfully' });
   });
 });

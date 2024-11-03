@@ -1,5 +1,5 @@
+const { generatePassword } = require('../config/passwordUtils');
 const userModel = require('../models/User');
-const { generatePassword, validPassword } = require('../config/passwordUtils');
 
 const userController = {
   createUser: async (req, res) => {

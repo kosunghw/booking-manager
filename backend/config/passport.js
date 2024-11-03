@@ -2,6 +2,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const pgPool = require('./database');
+const userModel = require('../models/User');
 const validPassword = require('./passwordUtils').validPassword;
 
 const verifyCallback = async (username, password, done) => {
@@ -40,15 +41,15 @@ const strategy = new LocalStrategy(
 passport.use(strategy);
 
 passport.serializeUser((user, done) => {
+  console.log('Serializing user:', user);
   done(null, user.user_id);
 });
 
 passport.deserializeUser(async (userId, done) => {
+  console.log('Deserializing userId:', userId);
   try {
-    const query = `SELECT * FROM users WHERE user_id = $1`;
-    const values = [userId];
-    const res = await pgPool.query(query, values);
-    done(null, res.rows[0]); // Return the user object
+    const res = await userModel.getById(userId);
+    done(null, res); // Return the user object
   } catch (err) {
     done(err, null);
   }
