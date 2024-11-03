@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useSignIn } from 'react-auth-kit';
+import { useState, useEffect } from 'react';
+import { useSignIn, useIsAuthenticated } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
@@ -10,6 +10,14 @@ export default function Login() {
   const [message, setMessage] = useState('');
   const signIn = useSignIn();
   const navigate = useNavigate();
+  const isAuthenticated = useIsAuthenticated();
+
+  useEffect(() => {
+    // console.log(isAuthenticated);
+    if (isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -29,19 +37,22 @@ export default function Login() {
       });
 
       const data = await response.json();
+      console.log('Login response:', data); // debug response
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
 
-      if (
-        signIn({
-          token: 'session',
-          expiresIn: 1000 * 60 * 60 * 24 * 7,
-          tokenType: 'Cookie',
-          authState: data.user,
-        })
-      ) {
+      const signInResult = signIn({
+        token: 'true',
+        expiresIn: 1000 * 60 * 60 * 24 * 7,
+        tokenType: 'Cookie',
+        authState: data.user,
+      });
+
+      console.log('SignIn result:', signInResult); // debug signIn
+
+      if (signInResult) {
         // Successful login
         navigate('/dashboard');
       } else {
@@ -49,6 +60,7 @@ export default function Login() {
       }
     } catch (err) {
       setMessage(err.message);
+      console.error('Login error:', err); // debug errors
     }
   };
   return (
