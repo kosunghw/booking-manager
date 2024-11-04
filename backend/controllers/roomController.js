@@ -29,13 +29,12 @@ const roomController = {
   },
 
   getRoomByUserId: async (req, res) => {
-    if (req.params.userId !== req.user.id);
     try {
-      const room = await roomModel.getById(req.params.userId);
-      if (!room) {
+      const rooms = await roomModel.getById(req.user.user_id);
+      if (!rooms) {
         return res.status(404).json({ message: 'Room not found' });
       }
-      res.json(user);
+      res.json(rooms);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -44,6 +43,17 @@ const roomController = {
   // TODO: updateRoom
 
   // TODO: deleteRoom
+  deleteRoom: async (req, res) => {
+    try {
+      const room = await roomModel.delete(req.params.roomId);
+      if (!room) {
+        return res.status(404).json({ message: 'Room not found' });
+      }
+      res.json(room);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = roomController;
