@@ -41,6 +41,19 @@ const roomModel = {
     }
   },
 
+  // Get room by roomId
+  getByRoomId: async (roomId) => {
+    try {
+      const result = await pool.query(
+        `SELECT * FROM rooms WHERE room_id = $1`,
+        [roomId]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error fetching room by room ID: ${error.message}`);
+    }
+  },
+
   // Get room by userID
   getById: async (userId) => {
     try {
@@ -50,7 +63,20 @@ const roomModel = {
       );
       return result.rows;
     } catch (error) {
-      throw new Error(`Error fetching room by ID: ${error.message}`);
+      throw new Error(`Error fetching room by user ID: ${error.message}`);
+    }
+  },
+
+  // Delete room
+  delete: async (roomId) => {
+    try {
+      const result = await pool.query(
+        `DELETE FROM rooms WHERE room_id = $1 RETURNING *`,
+        [roomId]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error deleting room: ${error.message}`);
     }
   },
 };
