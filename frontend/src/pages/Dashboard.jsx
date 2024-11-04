@@ -11,6 +11,33 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [roomNumber, setRoomNumber] = useState('');
 
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchRooms = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/rooms/my-rooms', {
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch rooms');
+      }
+
+      const data = await response.json();
+      setRooms(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
   const handleLogout = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/users/logout', {
@@ -58,19 +85,58 @@ export default function Dashboard() {
         setRoomNumber('');
         setShowModal(false);
       }
+      await fetchRooms();
     } catch (error) {
       console.error('Error creating room:', error);
+    }
+  };
+
+  const handleDelete = async (roomId) => {
+    if (window.confirm('Are you sure you want to delete this room?')) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/rooms/${roomId}`,
+          {
+            method: 'DELETE',
+            credentials: 'include',
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to delete room');
+        }
+
+        fetchRooms();
+      } catch (error) {
+        console.error('Delete error:', error);
+      }
     }
   };
 
   if (!isAuthenticated()) {
     return <Navigate to='/login' />;
   }
+  if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error}</div>;
   return (
     <div>
       <h1>Welcome to Dashboard, {auth().username}</h1>
       <button onClick={handleLogout}>Logout</button>
       <button onClick={() => setShowModal(true)}>Add Room</button>
+
+      <h1>My Rooms</h1>
+      {rooms.map((room) => (
+        <div key={room.room_id}>
+          Room Number: {room.room_number}
+          <button
+            onClick={() => {
+              handleDelete(room.room_id);
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      ))}
 
       {showModal && (
         <div className='modal'>
