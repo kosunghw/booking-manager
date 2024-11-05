@@ -8,14 +8,15 @@ const pool = require('../config/database');
 const bookingModel = {
   // Create a new booking
   create: async (reservationData) => {
-    const { room_id, customer_name, check_in, check_out } = reservationData;
+    const { room_id, customer_name, check_in, check_out, phone_number } =
+      reservationData;
     try {
       const result = await pool.query(
         `INSERT INTO bookings
-        (room_id, customer_name, check_in, check_out)
-        VALUES ($1, $2, $3, $4)
+        (room_id, customer_name, check_in, check_out, phone_number)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *`,
-        [room_id, customer_name, check_in, check_out]
+        [room_id, customer_name, check_in, check_out, phone_number]
       );
       return result.rows[0];
     } catch (error) {
@@ -33,6 +34,7 @@ const bookingModel = {
           b.customer_name,
           b.check_in,
           b.check_out,
+          b.phone_number,
           b.created_at,
           r.room_number
         FROM bookings b
@@ -60,7 +62,8 @@ const bookingModel = {
 
   // Update booking
   update: async (bookingId, updateData) => {
-    const { room_id, customer_name, check_in, check_out } = updateData;
+    const { room_id, customer_name, check_in, check_out, phone_number } =
+      updateData;
     try {
       const result = await pool.query(
         `UPDATE bookings
@@ -68,10 +71,11 @@ const bookingModel = {
           room_id = COALESCE($1, room_id),
           customer_name = COALESCE($2, customer_name),
           check_in = COALESCE($3, check_in),
-          check_out = COALESCE($4, check_out)
+          check_out = COALESCE($4, check_out),
+          phone_number = COALESCE($5, phone_number),
         WHERE booking_id = $5
         RETURNING *`,
-        [room_id, customer_name, check_in, check_out, bookingId]
+        [room_id, customer_name, check_in, check_out, phone_number, bookingId]
       );
       return result.rows[0];
     } catch (error) {

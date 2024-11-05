@@ -9,7 +9,8 @@ const bookingController = {
       const isAvailable = await bookingModel.checkRoomAvailability(
         room_id,
         check_in,
-        check_out
+        check_out,
+        phone_number
       );
 
       if (!isAvailable) {
