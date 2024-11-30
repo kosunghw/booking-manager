@@ -6,7 +6,6 @@ const userController = {
     try {
       const { username, password } = req.body;
       const hashPassword = generatePassword(password);
-      console.log(hashPassword);
 
       // TODO:Check if user exists
 

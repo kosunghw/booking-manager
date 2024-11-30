@@ -14,7 +14,6 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 router.post('/logout', (req, res, next) => {
-  console.log('Logout route hit');
   req.logout((err) => {
     if (err) {
       console.log('Logout Error:', err);

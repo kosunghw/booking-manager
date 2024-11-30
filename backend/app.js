@@ -55,20 +55,20 @@ app.use('/api/auth', authRoutes); // Login / Logout routes
 // Routes that need authentication
 // app.use('/api/*', ensureAuthenticated);
 
-// Debugging room route
-app.use((req, res, next) => {
-  console.log('Session:', req.session);
-  console.log('User:', req.user);
-  console.log('Authenticated:', req.isAuthenticated());
-  next();
-});
+// // Debugging room route
+// app.use((req, res, next) => {
+//   console.log('Session:', req.session);
+//   console.log('User:', req.user);
+//   console.log('Authenticated:', req.isAuthenticated());
+//   next();
+// });
 
 app.use('/api/rooms', roomRoutes);
 
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/users', userRoutes);
 
-app.get('/', (req, res) => res.send('Hello, world!'));
+// app.get('/', (req, res) => res.send('Hello, world!'));
 
 app.listen(PORT, () => {
   console.log(`My first Express app - listening on port ${PORT}!`);
