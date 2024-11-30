@@ -65,21 +65,71 @@ export default function Dashboard() {
   if (!isAuthenticated()) {
     return <Navigate to='/login' />;
   }
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-gray-100'>
+        <div className='text-xl text-gray-600'>Loading...</div>
+      </div>
+    );
+  }
   // if (error) return <div>Error: {error}</div>;
   return (
-    <div>
-      <h1>Welcome to Dashboard, {auth().username}</h1>
-      <button onClick={handleLogout}>Logout</button>
-      <button onClick={() => setShowRoomModal(true)}>Add Room</button>
+    <div className='min-h-screen bg-gray-100'>
+      {/* Header */}
+      <header className='bg-white shadow'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
+          <div className='flex justify-between items-center'>
+            <div>
+              <h1 className='text-2xl font-semibold text-gray-900'>
+                Welcome, {auth().username}
+              </h1>
+            </div>
+            <div className='flex gap-4'>
+              <button
+                onClick={() => setShowRoomModal(true)}
+                className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'
+              >
+                Add Room
+              </button>
+              <button
+                onClick={() => setShowBookingModal(true)}
+                className='px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700'
+              >
+                New Booking
+              </button>
+              <button
+                onClick={handleLogout}
+                className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors'
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <h1>My Rooms</h1>
-      <Room
-        rooms={rooms}
-        fetchRooms={fetchRooms}
-        setShowBookingModal={setShowBookingModal}
-      />
+      {/* Main Content */}
+      <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='bg-white rounded-lg shadow p-6'>
+          <div className='mb-6'>
+            <h2 className='text-xl font-semibold text-gray-900'>My Rooms</h2>
+          </div>
 
+          {error && (
+            <div className='mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded'>
+              {error}
+            </div>
+          )}
+
+          <Room
+            rooms={rooms}
+            fetchRooms={fetchRooms}
+            setShowBookingModal={setShowBookingModal}
+          />
+        </div>
+      </main>
+
+      {/* Modals */}
       {showRoomModal && (
         <RoomModal
           setShowRoomModal={setShowRoomModal}
@@ -88,7 +138,11 @@ export default function Dashboard() {
       )}
 
       {showBookingModal && (
-        <BookingModal setShowBookingModal={setShowBookingModal} />
+        <BookingModal
+          setShowBookingModal={setShowBookingModal}
+          rooms={rooms}
+          fetchRooms={fetchRooms}
+        />
       )}
     </div>
   );
