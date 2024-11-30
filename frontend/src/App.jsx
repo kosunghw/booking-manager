@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useIsAuthenticated } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
+import './index.css';
 
 function App() {
   const isAuthenticated = useIsAuthenticated();
