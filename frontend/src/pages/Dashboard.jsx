@@ -4,6 +4,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import Room from '../components/Room';
 import RoomModal from '../components/RoomModal';
 import BookingModal from '../components/BookingModal';
+import RoomCalendar from '../components/RoomCalendar';
 
 export default function Dashboard() {
   const signOut = useSignOut();
@@ -62,6 +63,28 @@ export default function Dashboard() {
     }
   };
 
+  const handleDelete = async (roomId) => {
+    if (window.confirm('Are you sure you want to delete this room?')) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/rooms/${roomId}`,
+          {
+            method: 'DELETE',
+            credentials: 'include',
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to delete room');
+        }
+
+        fetchRooms();
+      } catch (error) {
+        console.error('Delete error:', error);
+      }
+    }
+  };
+
   if (!isAuthenticated()) {
     return <Navigate to='/login' />;
   }
@@ -110,40 +133,27 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        <div className='bg-white rounded-lg shadow p-6'>
-          <div className='mb-6'>
-            <h2 className='text-xl font-semibold text-gray-900'>My Rooms</h2>
-          </div>
+        {/* Calendar */}
+        <div className='mb-8'>
+          <RoomCalendar rooms={rooms} handleDelete={handleDelete} />
+        </div>
 
-          {error && (
-            <div className='mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded'>
-              {error}
-            </div>
-          )}
+        {/* Modals */}
+        {showRoomModal && (
+          <RoomModal
+            setShowRoomModal={setShowRoomModal}
+            fetchRooms={fetchRooms}
+          />
+        )}
 
-          <Room
+        {showBookingModal && (
+          <BookingModal
+            setShowBookingModal={setShowBookingModal}
             rooms={rooms}
             fetchRooms={fetchRooms}
-            setShowBookingModal={setShowBookingModal}
           />
-        </div>
+        )}
       </main>
-
-      {/* Modals */}
-      {showRoomModal && (
-        <RoomModal
-          setShowRoomModal={setShowRoomModal}
-          fetchRooms={fetchRooms}
-        />
-      )}
-
-      {showBookingModal && (
-        <BookingModal
-          setShowBookingModal={setShowBookingModal}
-          rooms={rooms}
-          fetchRooms={fetchRooms}
-        />
-      )}
     </div>
   );
 }
