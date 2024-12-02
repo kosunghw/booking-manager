@@ -25,21 +25,23 @@ const bookingModel = {
   },
 
   // Get all bookings
-  getAll: async () => {
+  getAll: async (userId) => {
     try {
       const result = await pool.query(
         `SELECT
           b.booking_id,
           b.room_id,
           b.customer_name,
-          b.check_in,
-          b.check_out,
+          TO_CHAR(b.check_in, 'YYYY-MM-DD') as check_in,
+          TO_CHAR(b.check_out, 'YYYY-MM-DD') as check_out,
           b.phone_number,
           b.created_at,
           r.room_number
         FROM bookings b
-        LEFT JOIN rooms r ON b.room_id = r.room_id
-        ORDER BY b.created_at DESC`
+        JOIN rooms r ON b.room_id = r.room_id
+        WHERE r.user_id = $1
+        ORDER BY b.created_at ASC`,
+        [userId]
       );
       return result.rows;
     } catch (error) {
@@ -104,10 +106,8 @@ const bookingModel = {
         FROM bookings
         WHERE room_id = $1
         AND (
-          (check_in BETWEEN $2 AND $3) OR
-          (check_out BETWEEN $2 AND $3) OR
-          (check_in <= $2 AND check_out >= $3)
-        )`,
+        (check_in < $3 AND check_out > $2)
+      )`,
         [roomId, checkIn, checkOut]
       );
       return parseInt(result.rows[0].count) === 0;

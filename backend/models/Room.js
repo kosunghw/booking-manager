@@ -8,16 +8,17 @@ const pool = require('./../config/database');
 const roomModel = {
   // Create a room
   create: async (roomData) => {
-    const { roomNumber, userId } = roomData;
+    const { roomNumber, roomColor, userId } = roomData;
     console.log('=======ROOM MODEL==========');
     console.log('room number:', roomNumber);
+    console.log('room color:', roomColor);
     console.log('user id:', userId);
     try {
       const query = `
-        INSERT INTO rooms (room_number,  user_id)
-        VALUES ($1, $2)
+        INSERT INTO rooms (room_number, room_color, user_id)
+        VALUES ($1, $2, $3)
         RETURNING *`;
-      const values = [roomNumber, userId];
+      const values = [roomNumber, roomColor, userId];
 
       console.log('SQL Query:', query);
       console.log('Values:', values);

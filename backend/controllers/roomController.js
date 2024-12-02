@@ -3,11 +3,12 @@ const roomModel = require('../models/Room');
 const roomController = {
   createRoom: async (req, res) => {
     try {
-      const { roomNumber } = req.body;
+      const { roomNumber, roomColor } = req.body;
       const userId = req.user.user_id;
 
       const room = await roomModel.create({
         roomNumber,
+        roomColor,
         userId,
       });
       res.status(201).json({ ...room, success: 'Room Created Successfully' });

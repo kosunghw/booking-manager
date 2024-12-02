@@ -27,7 +27,9 @@ const bookingController = {
 
   getAllBookings: async (req, res) => {
     try {
-      const bookings = await bookingModel.getAll();
+      const userId = req.user.user_id; // Change from req.user.id to req.user.user_id
+      console.log('Fetching bookings for userId:', userId);
+      const bookings = await bookingModel.getAll(userId);
       res.json(bookings);
     } catch (error) {
       res.status(500).json({ message: error.message });
