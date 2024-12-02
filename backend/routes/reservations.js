@@ -3,9 +3,7 @@ const bookingController = require('../controllers/bookingController');
 const isAuth = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send('RESERVE ROUTER');
-});
+router.get('/', isAuth, bookingController.getAllBookings);
 
 router.post('/', isAuth, bookingController.createBooking);
 
