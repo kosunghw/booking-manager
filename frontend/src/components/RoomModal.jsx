@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import ColorPicker from './ColorPicker';
 
 export default function RoomModal({ setShowRoomModal, fetchRooms }) {
   const [roomNumber, setRoomNumber] = useState('');
+  const [roomColor, setRoomColor] = useState('#FFFFFF');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -19,6 +21,7 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
         credentials: 'include',
         body: JSON.stringify({
           roomNumber: roomNumber,
+          roomColor: roomColor,
         }),
       });
 
@@ -31,6 +34,7 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
       await fetchRooms();
       setRoomNumber('');
       setShowRoomModal(false);
+      setRoomColor('#FFFFFF');
     } catch (error) {
       setError(error.message);
     } finally {
@@ -82,6 +86,17 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
               required
               className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
               placeholder='Enter room number'
+            />
+            <label
+              htmlFor='roomColor'
+              className='block text-sm font-medium text-gray-700 mb-1'
+            >
+              Room Color
+            </label>
+            <ColorPicker
+              id='roomColor'
+              value={roomColor}
+              onChange={setRoomColor}
             />
           </div>
 
