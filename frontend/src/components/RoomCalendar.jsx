@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import {
   format,
@@ -11,6 +11,8 @@ import {
 } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { enUS } from 'date-fns/locale';
+import RoomColorLegend from './RoomColorLegend';
+import BookingInfo from './BookingInfo';
 
 const locales = {
   'en-US': enUS,
@@ -29,6 +31,7 @@ function RoomCalendar({ rooms, handleDelete }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   // Fetch bookings
   const fetchBookings = async () => {
@@ -76,6 +79,11 @@ function RoomCalendar({ rooms, handleDelete }) {
         end: endOfDay(parseISO(booking.check_out)),
         roomNumber: booking.room_number,
         roomColor: getColorFromId(booking),
+        title: `${booking.customer_name}`,
+        resource: {
+          customerName: booking.customer_name,
+          phoneNumber: booking.phone_number,
+        },
       }));
       setEvents(convertedEvents);
     }
@@ -86,7 +94,63 @@ function RoomCalendar({ rooms, handleDelete }) {
     return matchingRoom ? matchingRoom.room_color : null;
   };
 
-  /**
+  const eventStyleGetter = (event) => {
+    const backgroundColor = event.roomColor || '#000';
+    return {
+      style: {
+        backgroundColor,
+        color: 'white',
+        borderRadius: '5px',
+        padding: '5px',
+        height: '30px',
+      },
+    };
+  };
+
+  // Handle Booking click
+  const handleEventClick = useCallback((event) => setSelectedEvent(event), []);
+
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className='p-4'>
+      <h1 className='text-center text-2xl font-bold my-4'>
+        Room Booking Calendar
+      </h1>
+      <div className='flex justify-center mb-4'>
+        <RoomColorLegend rooms={rooms} onDeleteRoom={handleDelete} />
+      </div>
+
+      <Calendar
+        localizer={localizer}
+        events={events}
+        defaultView='month' // Show full month view
+        // views={['month']} // Only show the month view
+        startAccessor='start'
+        endAccessor='end'
+        style={{ height: 1000 }}
+        eventPropGetter={eventStyleGetter} // Apply custom colors
+        onSelectEvent={handleEventClick}
+      />
+
+      {selectedEvent && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <BookingInfo event={selectedEvent} onClose={handleCloseModal} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default RoomCalendar;
+
+/**
    * 
    * // Helper function to check if a date has a booking
   const getBookingsForCell = (roomId, date) => {
@@ -189,74 +253,3 @@ function RoomCalendar({ rooms, handleDelete }) {
     setCurrentDate(newDate);
   }
    */
-
-  const eventStyleGetter = (event) => {
-    console.log(event);
-    const backgroundColor = event.roomColor || '#000';
-    return {
-      style: {
-        backgroundColor,
-        color: 'white',
-        borderRadius: '5px',
-        padding: '5px',
-        height: '10px',
-      },
-    };
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div className='p-4'>
-      <h1 className='text-center text-2xl font-bold my-4'>
-        Room Booking Calendar
-      </h1>
-      <div className='flex justify-center mb-4'>
-        {/* Room Color Legend */}
-        <div>
-          {rooms.map((room) => (
-            <div key={room.room_id} className='flex items-center mb-2'>
-              <div
-                className='w-4 h-4 mr-2'
-                style={{ backgroundColor: room.room_color }}
-              ></div>
-              <span>Room {room.room_number}</span>
-              <button
-                className='ml-2 text-red-500 hover:text-red-700'
-                onClick={() => handleDelete(room.room_id)}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='w-4 h-4'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.436-2.845 3-2.845s3 1.281 3 2.845z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <Calendar
-        localizer={localizer}
-        events={events}
-        defaultView='month' // Show full month view
-        views={['month']} // Only show the month view
-        startAccessor='start'
-        endAccessor='end'
-        style={{ height: 600 }}
-        eventPropGetter={eventStyleGetter} // Apply custom colors
-      />
-    </div>
-  );
-}
-
-export default RoomCalendar;

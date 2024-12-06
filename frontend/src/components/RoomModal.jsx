@@ -89,7 +89,7 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
             />
             <label
               htmlFor='roomColor'
-              className='block text-sm font-medium text-gray-700 mb-1'
+              className='block text-sm font-medium text-gray-700 mb-3 mt-3'
             >
               Room Color
             </label>
