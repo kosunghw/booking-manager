@@ -2,7 +2,7 @@ import React from 'react';
 
 const RoomColorLegend = ({ rooms, onDeleteRoom }) => {
   return (
-    <div className='flex flex-wrap gap-4 w-full max-w-md border-2 rounded-md p-4'>
+    <div className='flex flex-wrap gap-4 w-full max-w-lg border-2 rounded-md p-4'>
       {rooms.map((room) => (
         <div key={room.room_id} className='flex items-center'>
           <div

@@ -28,7 +28,6 @@ const localizer = dateFnsLocalizer({
 
 function RoomCalendar({
   rooms,
-  handleDelete,
   events,
   setEvents,
   setSelectedEvent,
@@ -90,13 +89,6 @@ function RoomCalendar({
 
   return (
     <div className='p-4'>
-      <h1 className='text-center text-2xl font-bold my-4'>
-        Room Booking Calendar
-      </h1>
-      <div className='flex justify-center mb-4'>
-        <RoomColorLegend rooms={rooms} onDeleteRoom={handleDelete} />
-      </div>
-
       <Calendar
         localizer={localizer}
         events={events}

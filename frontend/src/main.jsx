@@ -7,6 +7,8 @@ import App from './App.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import Layout from './components/Layout.jsx';
+import Settings from './pages/Settings.jsx';
 
 const authConfig = {
   authType: 'cookie',
@@ -30,7 +32,19 @@ const router = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    element: <Dashboard />,
+    element: (
+      <Layout>
+        <Dashboard />
+      </Layout>
+    ),
+  },
+  {
+    path: '/settings',
+    element: (
+      <Layout>
+        <Settings />
+      </Layout>
+    ),
   },
 ]);
 

@@ -1,17 +1,14 @@
-import { useSignOut, useAuthUser, useIsAuthenticated } from 'react-auth-kit';
-import { useEffect, useState, useCallback } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
-import Room from '../components/Room';
+import { useIsAuthenticated } from 'react-auth-kit';
+import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import RoomModal from '../components/RoomModal';
 import BookingModal from '../components/BookingModal';
 import RoomCalendar from '../components/RoomCalendar';
 import BookingInfo from '../components/BookingInfo';
 import BookingEditModal from '../components/BookingEditModal';
+import RoomColorLegend from '../components/RoomColorLegend';
 
 export default function Dashboard() {
-  const signOut = useSignOut();
-  const navigate = useNavigate();
-  const auth = useAuthUser();
   const isAuthenticated = useIsAuthenticated();
 
   const [showRoomModal, setShowRoomModal] = useState(false);
@@ -85,27 +82,6 @@ export default function Dashboard() {
     fetchBookings();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/users/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        signOut();
-        navigate('/login');
-      } else {
-        const errorData = await response.json();
-        console.log('Response status:', response.status);
-        console.log('Error data:', errorData);
-        throw new Error(errorData.message || 'Logout failed');
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const handleDelete = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
@@ -168,88 +144,85 @@ export default function Dashboard() {
   }
   // if (error) return <div>Error: {error}</div>;
   return (
-    <div className='min-h-screen bg-gray-100'>
-      {/* Header */}
-      <header className='bg-white shadow'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
-          <div className='flex justify-between items-center'>
-            <div>
-              <h1 className='text-2xl font-semibold text-gray-900'>
-                Welcome, {auth().username}
-              </h1>
-            </div>
-            <div className='flex gap-4'>
-              <button
-                onClick={() => setShowRoomModal(true)}
-                className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors'
-              >
-                Add Room
-              </button>
-              <button
-                onClick={() => setShowBookingModal(true)}
-                className='px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700'
-              >
-                New Booking
-              </button>
-              <button
-                onClick={handleLogout}
-                className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors'
-              >
-                Logout
-              </button>
-            </div>
+    <>
+      {/* Main Content */}
+      <div className=' p-4 rounded-lg mb-6'>
+        <div className='flex justify-between items-end'>
+          {/* Legend on the left */}
+          <div>
+            <RoomColorLegend rooms={rooms} onDeleteRoom={handleDelete} />
+          </div>
+
+          {/* Action buttons on the right */}
+          <div className='flex gap-4 mt-0'>
+            <button
+              onClick={() => setShowRoomModal(true)}
+              className='px-4 py-2 rounded-md hover:opacity-80 transition-colors'
+              style={{
+                backgroundColor: '#45503B',
+                color: '#F8BE5C',
+              }}
+            >
+              Add Room
+            </button>
+            <button
+              onClick={() => setShowBookingModal(true)}
+              className='px-4 py-2 rounded-md hover:opacity-80 transition-colors'
+              style={{
+                backgroundColor: '#45503B',
+                color: '#F8BE5C',
+              }}
+            >
+              New Booking
+            </button>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        {/* Calendar */}
-        <div className='mb-8'>
-          <RoomCalendar
-            rooms={rooms}
-            handleDelete={handleDelete}
-            events={events}
-            setEvents={setEvents}
-            setSelectedEvent={setSelectedEvent}
-            setShowBookingInfo={setShowBookingInfo}
-            bookings={bookings}
-          />
-        </div>
+      {/* Calendar */}
+      <div className='mb-8'>
+        <RoomCalendar
+          rooms={rooms}
+          events={events}
+          setEvents={setEvents}
+          setSelectedEvent={setSelectedEvent}
+          setShowBookingInfo={setShowBookingInfo}
+          bookings={bookings}
+        />
+      </div>
 
-        {/* Modals */}
-        {showRoomModal && (
-          <RoomModal
-            setShowRoomModal={setShowRoomModal}
-            fetchRooms={fetchRooms}
-          />
-        )}
+      {/* Modals */}
+      {showRoomModal && (
+        <RoomModal
+          setShowRoomModal={setShowRoomModal}
+          fetchRooms={fetchRooms}
+        />
+      )}
 
-        {showBookingModal && (
-          <BookingModal
-            setShowBookingModal={setShowBookingModal}
-            rooms={rooms}
-            fetchBookings={fetchBookings}
-          />
-        )}
+      {showBookingModal && (
+        <BookingModal
+          setShowBookingModal={setShowBookingModal}
+          rooms={rooms}
+          fetchBookings={fetchBookings}
+        />
+      )}
 
-        {showBookingInfo && (
-          <BookingInfo
-            event={selectedEvent}
-            setShowBookingInfo={setShowBookingInfo}
-            onDelete={handleDeleteBooking}
-            onEdit={handleEditBooking}
-          />
-        )}
+      {showBookingInfo && (
+        <BookingInfo
+          event={selectedEvent}
+          setShowBookingInfo={setShowBookingInfo}
+          onDelete={handleDeleteBooking}
+          onEdit={handleEditBooking}
+        />
+      )}
 
-        {showEditModal && (
-          <BookingEditModal
-            setShowEditModal={setShowEditModal}
-            selectedEvent={selectedEvent}
-            fetchBookings={fetchBookings}
-          />
-        )}
-      </main>
-    </div>
+      {showEditModal && (
+        <BookingEditModal
+          setShowEditModal={setShowEditModal}
+          selectedEvent={selectedEvent}
+          fetchBookings={fetchBookings}
+        />
+      )}
+    </>
   );
 }
