@@ -32,6 +32,7 @@ function RoomCalendar({
   events,
   setEvents,
   setSelectedEvent,
+  setShowBookingInfo,
   bookings,
 }) {
   const [loading, setLoading] = useState(false);
@@ -50,6 +51,9 @@ function RoomCalendar({
           customerName: booking.customer_name,
           phoneNumber: booking.phone_number,
           bookingId: booking.booking_id,
+          roomId: booking.room_id,
+          checkIn: booking.check_in,
+          checkOut: booking.check_out,
         },
       }));
       setEvents(convertedEvents);
@@ -75,7 +79,10 @@ function RoomCalendar({
   };
 
   // Handle Booking click
-  const handleEventClick = useCallback((event) => setSelectedEvent(event), []);
+  const handleEventClick = useCallback((event) => {
+    setShowBookingInfo(true);
+    setSelectedEvent(event);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -94,7 +101,7 @@ function RoomCalendar({
         localizer={localizer}
         events={events}
         defaultView='month' // Show full month view
-        // views={['month']} // Only show the month view
+        views={['month', 'week', 'day']} // Only show the month view
         startAccessor='start'
         endAccessor='end'
         style={{ height: 1000 }}

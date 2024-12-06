@@ -1,10 +1,10 @@
 import moment from 'moment';
 
-const BookingInfo = ({ event, setSelectedEvent, onEdit, onDelete }) => {
+const BookingInfo = ({ event, setShowBookingInfo, onEdit, onDelete }) => {
   // Close modal when clicking outside
   const handleOutsideClick = (e) => {
     if (e.target === e.currentTarget) {
-      setSelectedEvent(false);
+      setShowBookingInfo(false);
     }
   };
 
@@ -18,7 +18,7 @@ const BookingInfo = ({ event, setSelectedEvent, onEdit, onDelete }) => {
           <h2 className='text-xl font-bold'>Room {event.roomNumber}</h2>
 
           <button
-            onClick={() => setSelectedEvent(false)}
+            onClick={() => setShowBookingInfo(false)}
             className='text-gray-400 hover:text-gray-500 focus:outline-none'
           >
             <span className='text-2xl'>&times;</span>

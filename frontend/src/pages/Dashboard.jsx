@@ -6,6 +6,7 @@ import RoomModal from '../components/RoomModal';
 import BookingModal from '../components/BookingModal';
 import RoomCalendar from '../components/RoomCalendar';
 import BookingInfo from '../components/BookingInfo';
+import BookingEditModal from '../components/BookingEditModal';
 
 export default function Dashboard() {
   const signOut = useSignOut();
@@ -15,9 +16,11 @@ export default function Dashboard() {
 
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showBookingInfo, setShowBookingInfo] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [events, setEvents] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
 
+  const [events, setEvents] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -148,6 +151,11 @@ export default function Dashboard() {
     }
   };
 
+  const handleEditBooking = () => {
+    setShowEditModal(true);
+    setShowBookingInfo(false);
+  };
+
   if (!isAuthenticated()) {
     return <Navigate to='/login' />;
   }
@@ -204,6 +212,7 @@ export default function Dashboard() {
             events={events}
             setEvents={setEvents}
             setSelectedEvent={setSelectedEvent}
+            setShowBookingInfo={setShowBookingInfo}
             bookings={bookings}
           />
         </div>
@@ -220,15 +229,24 @@ export default function Dashboard() {
           <BookingModal
             setShowBookingModal={setShowBookingModal}
             rooms={rooms}
-            fetchRooms={fetchRooms}
+            fetchBookings={fetchBookings}
           />
         )}
 
-        {selectedEvent && (
+        {showBookingInfo && (
           <BookingInfo
             event={selectedEvent}
-            setSelectedEvent={setSelectedEvent}
+            setShowBookingInfo={setShowBookingInfo}
             onDelete={handleDeleteBooking}
+            onEdit={handleEditBooking}
+          />
+        )}
+
+        {showEditModal && (
+          <BookingEditModal
+            setShowEditModal={setShowEditModal}
+            selectedEvent={selectedEvent}
+            fetchBookings={fetchBookings}
           />
         )}
       </main>

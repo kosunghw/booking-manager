@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
+function BookingEditModal({ setShowEditModal, selectedEvent, fetchBookings }) {
   const [formData, setFormData] = useState({
-    room_id: '',
-    customer_name: '',
-    phone_number: '',
-    check_in: '',
-    check_out: '',
+    room_id: selectedEvent.resource.roomId || '',
+    customer_name: selectedEvent.resource.customerName || '',
+    phone_number: selectedEvent.resource.phoneNumber || '',
+    check_in: selectedEvent.resource.checkIn || '',
+    check_out: selectedEvent.resource.checkOut || '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,14 +17,17 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/reservations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/reservations/${selectedEvent.resource.bookingId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 
@@ -33,7 +36,7 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
       }
 
       await fetchBookings();
-      setShowBookingModal(false);
+      setShowEditModal(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,7 +47,7 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
   // Close modal when clicking outside
   const handleOutsideClick = (e) => {
     if (e.target === e.currentTarget) {
-      setShowBookingModal(false);
+      setShowEditModal(false);
     }
   };
 
@@ -60,10 +63,10 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
           {/* Header */}
           <div className='flex justify-between items-center pb-3'>
             <h3 className='text-lg leading-6 font-medium text-gray-900'>
-              New Booking
+              Edit Booking
             </h3>
             <button
-              onClick={() => setShowBookingModal(false)}
+              onClick={() => setShowEditModal(false)}
               className='text-gray-400 hover:text-gray-500 focus:outline-none'
             >
               <span className='text-2xl'>&times;</span>
@@ -90,18 +93,10 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
                 <select
                   id='room_id'
                   value={formData.room_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, room_id: e.target.value })
-                  }
-                  required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+                  disabled
                 >
-                  <option value=''>Select a room</option>
-                  {rooms.map((room) => (
-                    <option key={room.room_id} value={room.room_id}>
-                      Room {room.room_number}
-                    </option>
-                  ))}
+                  <option value=''>Room {selectedEvent.roomNumber}</option>
                 </select>
               </div>
               <label className='block text-sm font-medium text-gray-700 mb-1'>
@@ -169,7 +164,7 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
             <div className='flex justify-end gap-2 pt-4'>
               <button
                 type='button'
-                onClick={() => setShowBookingModal(false)}
+                onClick={() => setShowEditModal(false)}
                 disabled={loading}
                 className='px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400'
               >
@@ -180,7 +175,7 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
                 disabled={loading}
                 className='px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
               >
-                {loading ? 'Creating...' : 'Create Booking'}
+                {loading ? 'Editing...' : 'Edit Booking'}
               </button>
             </div>
           </form>
@@ -190,4 +185,4 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
   );
 }
 
-export default BookingModal;
+export default BookingEditModal;
