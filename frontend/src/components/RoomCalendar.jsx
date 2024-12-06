@@ -26,49 +26,15 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-function RoomCalendar({ rooms, handleDelete }) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [bookings, setBookings] = useState([]);
+function RoomCalendar({
+  rooms,
+  handleDelete,
+  events,
+  setEvents,
+  setSelectedEvent,
+  bookings,
+}) {
   const [loading, setLoading] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
-  // Fetch bookings
-  const fetchBookings = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('http://localhost:5000/api/reservations', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch bookings');
-      }
-
-      const data = await response.json();
-
-      if (Array.isArray(data)) {
-        setBookings(data);
-      } else {
-        console.error('Unexpected data structure:', data);
-        setBookings([]);
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      setBookings([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBookings();
-  }, []);
 
   useEffect(() => {
     if (bookings.length > 0) {
@@ -83,6 +49,7 @@ function RoomCalendar({ rooms, handleDelete }) {
         resource: {
           customerName: booking.customer_name,
           phoneNumber: booking.phone_number,
+          bookingId: booking.booking_id,
         },
       }));
       setEvents(convertedEvents);
@@ -110,10 +77,6 @@ function RoomCalendar({ rooms, handleDelete }) {
   // Handle Booking click
   const handleEventClick = useCallback((event) => setSelectedEvent(event), []);
 
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -138,12 +101,6 @@ function RoomCalendar({ rooms, handleDelete }) {
         eventPropGetter={eventStyleGetter} // Apply custom colors
         onSelectEvent={handleEventClick}
       />
-
-      {selectedEvent && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-          <BookingInfo event={selectedEvent} onClose={handleCloseModal} />
-        </div>
-      )}
     </div>
   );
 }

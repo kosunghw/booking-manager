@@ -1,10 +1,11 @@
 import { useSignOut, useAuthUser, useIsAuthenticated } from 'react-auth-kit';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import Room from '../components/Room';
 import RoomModal from '../components/RoomModal';
 import BookingModal from '../components/BookingModal';
 import RoomCalendar from '../components/RoomCalendar';
+import BookingInfo from '../components/BookingInfo';
 
 export default function Dashboard() {
   const signOut = useSignOut();
@@ -14,10 +15,13 @@ export default function Dashboard() {
 
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [events, setEvents] = useState([]);
 
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [bookings, setBookings] = useState([]);
 
   const fetchRooms = async () => {
     setLoading(true);
@@ -40,6 +44,42 @@ export default function Dashboard() {
   };
   useEffect(() => {
     fetchRooms();
+  }, []);
+
+  // Fetch bookings
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/reservations', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch bookings');
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        setBookings(data);
+      } else {
+        console.error('Unexpected data structure:', data);
+        setBookings([]);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setBookings([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchBookings();
   }, []);
 
   const handleLogout = async () => {
@@ -79,6 +119,29 @@ export default function Dashboard() {
         }
 
         fetchRooms();
+      } catch (error) {
+        console.error('Delete error:', error);
+      }
+    }
+  };
+
+  const handleDeleteBooking = async () => {
+    if (window.confirm('Are you sure you want to delete this room?')) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/reservations/${selectedEvent.resource.bookingId}`,
+          {
+            method: 'DELETE',
+            credentials: 'include',
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to delete booking');
+        }
+
+        setSelectedEvent(null);
+        fetchBookings();
       } catch (error) {
         console.error('Delete error:', error);
       }
@@ -135,7 +198,14 @@ export default function Dashboard() {
       <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         {/* Calendar */}
         <div className='mb-8'>
-          <RoomCalendar rooms={rooms} handleDelete={handleDelete} />
+          <RoomCalendar
+            rooms={rooms}
+            handleDelete={handleDelete}
+            events={events}
+            setEvents={setEvents}
+            setSelectedEvent={setSelectedEvent}
+            bookings={bookings}
+          />
         </div>
 
         {/* Modals */}
@@ -151,6 +221,14 @@ export default function Dashboard() {
             setShowBookingModal={setShowBookingModal}
             rooms={rooms}
             fetchRooms={fetchRooms}
+          />
+        )}
+
+        {selectedEvent && (
+          <BookingInfo
+            event={selectedEvent}
+            setSelectedEvent={setSelectedEvent}
+            onDelete={handleDeleteBooking}
           />
         )}
       </main>
