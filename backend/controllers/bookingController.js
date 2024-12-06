@@ -62,7 +62,7 @@ const bookingController = {
 
   deleteBooking: async (req, res) => {
     try {
-      const booking = await bookingModel.delete(req.params.id);
+      const booking = await bookingModel.delete(req.params.bookingId);
       if (!booking) {
         return res.status(404).json({ message: 'Booking not found' });
       }
