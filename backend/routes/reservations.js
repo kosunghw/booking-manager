@@ -9,4 +9,6 @@ router.post('/', isAuth, bookingController.createBooking);
 
 router.delete('/:bookingId', isAuth, bookingController.deleteBooking);
 
+router.put('/:bookingId', isAuth, bookingController.updateBooking);
+
 module.exports = router;

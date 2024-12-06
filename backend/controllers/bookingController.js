@@ -50,7 +50,9 @@ const bookingController = {
 
   updateBooking: async (req, res) => {
     try {
-      const booking = await bookingModel.update(req.params.id, req.body);
+      console.log('params: ', req.params);
+      console.log('body: ', req.body);
+      const booking = await bookingModel.update(req.params.bookingId, req.body);
       if (!booking) {
         return res.status(404).json({ message: 'Booking not found' });
       }

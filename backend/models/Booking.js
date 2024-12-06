@@ -64,7 +64,7 @@ const bookingModel = {
 
   // Update booking
   update: async (bookingId, updateData) => {
-    const { room_id, customer_name, check_in, check_out, phone_number } =
+    const { room_id, customer_name, phone_number, check_in, check_out } =
       updateData;
     try {
       const result = await pool.query(
@@ -74,8 +74,8 @@ const bookingModel = {
           customer_name = COALESCE($2, customer_name),
           check_in = COALESCE($3, check_in),
           check_out = COALESCE($4, check_out),
-          phone_number = COALESCE($5, phone_number),
-        WHERE booking_id = $5
+          phone_number = COALESCE($5, phone_number)
+        WHERE booking_id = $6
         RETURNING *`,
         [room_id, customer_name, check_in, check_out, phone_number, bookingId]
       );
