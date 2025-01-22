@@ -39,7 +39,7 @@ export default function Login() {
       });
 
       const data = await response.json();
-      console.log('Login response:', data); // debug response
+      // console.log('Login response:', data); // debug response
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
@@ -52,7 +52,7 @@ export default function Login() {
         authState: data.user,
       });
 
-      console.log('SignIn result:', signInResult); // debug signIn
+      // console.log('SignIn result:', signInResult); // debug signIn
 
       if (signInResult) {
         // Successful login

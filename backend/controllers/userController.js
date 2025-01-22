@@ -75,11 +75,28 @@ const userController = {
 
   deleteUser: async (req, res) => {
     try {
-      const user = await userModel.delete(req.params.id);
+      console.log(req.user);
+      const userId = req.user.user_id;
+      const user = await userModel.delete(userId);
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      res.json({ message: 'User deleted successfully' });
+
+      // Passport logout
+      req.logout((err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Failed to logout' });
+        }
+
+        req.session.destroy((err) => {
+          if (err) {
+            return res.status(500).json({ error: 'Failed to clear session' });
+          }
+          res.clearCookie('userid');
+          res.json({ message: 'Account deleted successfully' });
+        });
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

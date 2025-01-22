@@ -9,27 +9,23 @@ export default function Settings() {
   const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
-    if (
-      !window.confirm(
-        'Are you sure you want to delete your account? This action cannot be undone.'
-      )
-    ) {
+    if (!window.confirm('Are you sure you want to delete your account?')) {
       return;
     }
 
     setIsDeleting(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/users/delete`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        }
-      );
+      const response = await fetch('http://localhost:5000/api/users/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
       if (response.ok) {
         signOut();
-        navigate('/register');
+        navigate('/login');
       } else {
         const error = await response.json();
         alert(error.message || 'Failed to delete account');

@@ -26,4 +26,6 @@ router.post('/logout', (req, res, next) => {
 
 router.get('/:userId', isAuth, userController.getUserById);
 
+router.delete('/delete', userController.deleteUser);
+
 module.exports = router;
