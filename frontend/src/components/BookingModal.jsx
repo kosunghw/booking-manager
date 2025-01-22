@@ -171,14 +171,22 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
                 type='button'
                 onClick={() => setShowBookingModal(false)}
                 disabled={loading}
-                className='px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400'
+                className='px-4 py-2 text-gray-700 text-sm font-medium rounded-md hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-gray-400'
+                style={{
+                  backgroundColor: '#F8BE5C',
+                  color: '#45503B',
+                }}
               >
                 Cancel
               </button>
               <button
                 type='submit'
                 disabled={loading}
-                className='px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
+                className='px-4 py-2 text-white text-sm font-medium rounded-md hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
+                style={{
+                  backgroundColor: '#45503B',
+                  color: '#F8BE5C',
+                }}
               >
                 {loading ? 'Creating...' : 'Create Booking'}
               </button>

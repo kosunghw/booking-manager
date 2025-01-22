@@ -108,14 +108,22 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
                 setRoomNumber('');
               }}
               disabled={loading}
-              className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400'
+              className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:opacity-80 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400'
+              style={{
+                backgroundColor: '#F8BE5C',
+                color: '#45503B',
+              }}
             >
               Cancel
             </button>
             <button
               type='submit'
               disabled={loading}
-              className='px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
+              className='px-4 py-2 text-sm font-medium text-white hover:opacity-80 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50'
+              style={{
+                backgroundColor: '#45503B',
+                color: '#F8BE5C',
+              }}
             >
               {loading ? 'Creating...' : 'Create Room'}
             </button>

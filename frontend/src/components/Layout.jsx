@@ -1,4 +1,5 @@
 // src/components/Layout.jsx
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthUser, useSignOut } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +9,8 @@ export default function Layout({ children }) {
   const signOut = useSignOut();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [showNav, setShowNav] = useState(true);
 
   const handleLogout = async () => {
     try {
@@ -61,46 +64,50 @@ export default function Layout({ children }) {
       {/* Main Content */}
       <div className='flex-1 flex overflow-hidden'>
         {/* Sidebar */}
-        <nav className='w-64' style={{ backgroundColor: '#E8E5DD' }}>
-          <div className='py-6 px-4'>
-            <Link
-              to='/dashboard'
-              className={`block px-4 py-2 rounded-md mb-2 transition-colors`}
-              style={{
-                color: '#45503B',
-                backgroundColor:
-                  location.pathname === '/dashboard'
-                    ? '#D8D5CD'
-                    : 'transparent',
-                fontWeight: '500', // Default weight
-                ...(location.pathname === '/dashboard' && {
-                  fontWeight: '600', // Bolder when active
-                }),
-              }}
-              onMouseEnter={(e) => (e.target.style.opacity = '0.8')}
-              onMouseLeave={(e) => (e.target.style.opacity = '1')}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to='/settings'
-              className={`block px-4 py-2 rounded-md transition-colors`}
-              style={{
-                color: '#45503B',
-                backgroundColor:
-                  location.pathname === '/settings' ? '#D8D5CD' : 'transparent',
-                fontWeight: '500', // Default weight
-                ...(location.pathname === '/settings' && {
-                  fontWeight: '600', // Bolder when active
-                }),
-              }}
-              onMouseEnter={(e) => (e.target.style.opacity = '0.8')}
-              onMouseLeave={(e) => (e.target.style.opacity = '1')}
-            >
-              Settings
-            </Link>
-          </div>
-        </nav>
+        {showNav && (
+          <nav className='w-64' style={{ backgroundColor: '#E8E5DD' }}>
+            <div className='py-6 px-4'>
+              <Link
+                to='/dashboard'
+                className={`block px-4 py-2 rounded-md mb-2 transition-colors`}
+                style={{
+                  color: '#45503B',
+                  backgroundColor:
+                    location.pathname === '/dashboard'
+                      ? '#D8D5CD'
+                      : 'transparent',
+                  fontWeight: '500', // Default weight
+                  ...(location.pathname === '/dashboard' && {
+                    fontWeight: '600', // Bolder when active
+                  }),
+                }}
+                onMouseEnter={(e) => (e.target.style.opacity = '0.8')}
+                onMouseLeave={(e) => (e.target.style.opacity = '1')}
+              >
+                Dashboard
+              </Link>
+              <Link
+                to='/settings'
+                className={`block px-4 py-2 rounded-md transition-colors`}
+                style={{
+                  color: '#45503B',
+                  backgroundColor:
+                    location.pathname === '/settings'
+                      ? '#D8D5CD'
+                      : 'transparent',
+                  fontWeight: '500', // Default weight
+                  ...(location.pathname === '/settings' && {
+                    fontWeight: '600', // Bolder when active
+                  }),
+                }}
+                onMouseEnter={(e) => (e.target.style.opacity = '0.8')}
+                onMouseLeave={(e) => (e.target.style.opacity = '1')}
+              >
+                Settings
+              </Link>
+            </div>
+          </nav>
+        )}
 
         {/* Page Content */}
         <main

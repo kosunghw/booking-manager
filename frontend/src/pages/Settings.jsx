@@ -42,7 +42,6 @@ export default function Settings() {
       <h2 className='text-2xl font-bold mb-6'>Account Settings</h2>
 
       <div className='bg-white shadow rounded-lg p-6'>
-        <h3 className='text-lg font-semibold text-red-600 mb-4'>Danger Zone</h3>
         <p className='text-gray-600 mb-4'>
           Once you delete your account, there is no going back. Please be
           certain.
@@ -50,7 +49,11 @@ export default function Settings() {
         <button
           onClick={handleDeleteAccount}
           disabled={isDeleting}
-          className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-red-400'
+          className='px-4 py-2  text-white rounded-md hover:opacity-80 disabled:bg-red-400'
+          style={{
+            backgroundColor: '#F8BE5C',
+            color: '#45503B',
+          }}
         >
           {isDeleting ? 'Deleting...' : 'Delete Account'}
         </button>

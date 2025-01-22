@@ -125,6 +125,7 @@ export default function Dashboard() {
         console.error('Delete error:', error);
       }
     }
+    setShowBookingInfo(false);
   };
 
   const handleEditBooking = () => {
