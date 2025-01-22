@@ -73,6 +73,22 @@ const userController = {
     }
   },
 
+  login: (req, res) => {
+    const { password_hash, created_at, ...safeUser } = req.user;
+    res.json({ message: 'Login successful', user: safeUser });
+  },
+
+  logout: (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        console.log('Logout Error:', err);
+        return res.status(500).json({ message: 'Error logging out' });
+      }
+      res.clearCookie('userid');
+      res.json({ message: 'Logged out successfully' });
+    });
+  },
+
   deleteUser: async (req, res) => {
     try {
       console.log(req.user);
