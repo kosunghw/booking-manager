@@ -98,6 +98,7 @@ export default function Dashboard() {
         }
 
         fetchRooms();
+        fetchBookings();
       } catch (error) {
         console.error('Delete error:', error);
       }
@@ -143,7 +144,6 @@ export default function Dashboard() {
       </div>
     );
   }
-  // if (error) return <div>Error: {error}</div>;
   return (
     <>
       {/* Main Content */}
