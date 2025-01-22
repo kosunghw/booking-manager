@@ -63,7 +63,10 @@ export default function Register() {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+    <div
+      className='min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'
+      style={{ backgroundColor: '#F5F2EA' }}
+    >
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
         <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>
           Create your account
@@ -72,7 +75,8 @@ export default function Register() {
           Already have an account?{' '}
           <Link
             to='/login'
-            className='font-medium text-blue-600 hover:text-blue-500'
+            className='font-medium hover:opacity-80'
+            style={{ color: '#45503B' }}
           >
             Sign in
           </Link>
@@ -158,7 +162,8 @@ export default function Register() {
               <button
                 type='submit'
                 disabled={loading}
-                className='flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex w-full justify-center rounded-md border border-transparent py-2 px-4 text-sm font-medium text-white shadow-sm hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                style={{ backgroundColor: '#45503B', color: '#F8BE5C' }}
               >
                 {loading ? 'Creating account...' : 'Create account'}
               </button>

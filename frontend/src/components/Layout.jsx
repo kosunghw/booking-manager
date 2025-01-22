@@ -119,7 +119,7 @@ export default function Layout({ children }) {
               © {new Date().getFullYear()} RoomBook. All rights reserved.
             </p>
             <a
-              href='https://github.com/YourUsername'
+              href='https://github.com/kosunghw'
               target='_blank'
               rel='noopener noreferrer'
               className='flex items-center gap-2 transition-opacity'
