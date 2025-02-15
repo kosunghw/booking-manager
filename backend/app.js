@@ -68,8 +68,6 @@ app.use('/api/rooms', roomRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/users', userRoutes);
 
-// app.get('/', (req, res) => res.send('Hello, world!'));
-
 app.listen(PORT, () => {
-  console.log(`My first Express app - listening on port ${PORT}!`);
+  console.log(`listening on port ${PORT}!`);
 });
