@@ -13,17 +13,20 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:5000/api/rooms`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          roomNumber: roomNumber,
-          roomColor: roomColor,
-        }),
-      });
+      const response = await fetch(
+        `https://booking-manager-43gf.onrender.com/api/rooms`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            roomNumber: roomNumber,
+            roomColor: roomColor,
+          }),
+        }
+      );
 
       const data = await response.json();
 

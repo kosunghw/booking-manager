@@ -17,7 +17,7 @@ function BookingEditModal({ setShowEditModal, selectedEvent, fetchBookings }) {
     setLoading(true);
     try {
       const response = await fetch(
-        'http://localhost:5000/api/reservations/${selectedEvent.resource.bookingId}',
+        'https://booking-manager-43gf.onrender.com/api/reservations/${selectedEvent.resource.bookingId}',
         {
           method: 'PUT',
           headers: {

@@ -16,14 +16,17 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/reservations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `https://booking-manager-43gf.onrender.com/api/reservations`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 

@@ -41,11 +41,14 @@ export default function Register() {
     };
 
     try {
-      const res = await fetch(`http://localhost:5000/api/users`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(allInputvalue),
-      });
+      const res = await fetch(
+        `https://booking-manager-43gf.onrender.com/api/users`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(allInputvalue),
+        }
+      );
 
       const resjson = await res.json();
       if (res.status === 201) {

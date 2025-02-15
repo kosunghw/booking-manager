@@ -26,9 +26,12 @@ export default function Dashboard() {
   const fetchRooms = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/rooms/my-rooms', {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        'https://booking-manager-43gf.onrender.com/api/rooms/my-rooms',
+        {
+          credentials: 'include',
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch rooms');
@@ -50,13 +53,16 @@ export default function Dashboard() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/reservations', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        'https://booking-manager-43gf.onrender.com/api/reservations',
+        {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -86,7 +92,7 @@ export default function Dashboard() {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/rooms/${roomId}`,
+          `https://booking-manager-43gf.onrender.com/api/rooms/${roomId}`,
           {
             method: 'DELETE',
             credentials: 'include',
@@ -109,7 +115,7 @@ export default function Dashboard() {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/reservations/${selectedEvent.resource.bookingId}`,
+          `https://booking-manager-43gf.onrender.com/api/reservations/${selectedEvent.resource.bookingId}`,
           {
             method: 'DELETE',
             credentials: 'include',
