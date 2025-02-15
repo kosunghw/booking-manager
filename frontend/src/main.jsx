@@ -14,7 +14,7 @@ const authConfig = {
   authType: 'cookie',
   authName: '_auth',
   cookieDomain: window.location.hostname,
-  cookieSecure: window.location.protocol === 'https:',
+  cookieSecure: true,
 };
 
 const router = createBrowserRouter([
