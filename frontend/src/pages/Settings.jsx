@@ -15,7 +15,7 @@ export default function Settings() {
 
     setIsDeleting(true);
     try {
-      const response = await fetch('http://localhost:5000/api/users/delete', {
+      const response = await fetch(`http://localhost:5000/api/users/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

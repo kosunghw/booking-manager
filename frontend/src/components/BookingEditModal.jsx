@@ -15,10 +15,9 @@ function BookingEditModal({ setShowEditModal, selectedEvent, fetchBookings }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const response = await fetch(
-        `http://localhost:5000/api/reservations/${selectedEvent.resource.bookingId}`,
+        'http://localhost:5000/api/reservations/${selectedEvent.resource.bookingId}',
         {
           method: 'PUT',
           headers: {
