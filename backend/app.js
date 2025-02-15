@@ -42,7 +42,10 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: process.env.FRONT_URL || `http://localhost:5173`,
+    origin: [
+      'https://booking-manager-lake.vercel.app',
+      'https://booking-manager-psi.vercel.app',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
