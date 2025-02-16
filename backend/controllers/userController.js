@@ -74,8 +74,18 @@ const userController = {
   },
 
   login: (req, res) => {
+    console.log('=== Login Controller ===');
+    console.log('req.session:', req.session);
+    console.log('req.user:', req.user);
+    console.log('req.isAuthenticated():', req.isAuthenticated());
+    console.log('req.cookies:', req.cookies);
+    console.log('==================');
     const { password_hash, created_at, ...safeUser } = req.user;
-    res.json({ message: 'Login successful', user: safeUser });
+    res.json({
+      message: 'Login successful',
+      user: safeUser,
+      isAuthenticated: req.isAuthenticated(),
+    });
   },
 
   logout: (req, res) => {

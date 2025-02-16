@@ -1,12 +1,14 @@
 // src/pages/Settings.jsx
 import { useState } from 'react';
-import { useSignOut } from 'react-auth-kit';
+import { useSignOut, useAuthUser } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
   const [isDeleting, setIsDeleting] = useState(false);
   const signOut = useSignOut();
   const navigate = useNavigate();
+  const auth = useAuthUser();
+  const username = auth()?.username;
 
   const handleDeleteAccount = async () => {
     if (!window.confirm('Are you sure you want to delete your account?')) {
@@ -42,6 +44,7 @@ export default function Settings() {
 
   return (
     <div className='max-w-3xl mx-auto'>
+      <h1 className='text-2xl font-bold mb-6'>Hello, {username}</h1>
       <h2 className='text-2xl font-bold mb-6'>Account Settings</h2>
 
       <div className='bg-white shadow rounded-lg p-6'>

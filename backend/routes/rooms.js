@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const roomController = require('../controllers/roomController');
-const passport = require('passport');
 const isAuth = require('../middleware/auth');
 
 router.get('/', (req, res) => {
