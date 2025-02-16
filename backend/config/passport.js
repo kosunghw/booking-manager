@@ -44,12 +44,23 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (userId, done) => {
+  console.log('=== Deserializing User Start ===');
+  console.log('userId:', userId);
+  console.log('typeof userId:', typeof userId);
   try {
     const res = await userModel.getById(userId);
-    done(null, res); // Return the user object
+    console.log('User from database:', res);
+    if (!res) {
+      console.log('No user found with id:', userId);
+      return done(null, false);
+    }
+    console.log('Deserialization successful');
+    done(null, res);
   } catch (err) {
+    console.error('Deserialization error:', err);
     done(err, null);
   }
+  console.log('=== Deserializing User End ===');
 });
 
 module.exports = passport;
