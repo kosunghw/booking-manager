@@ -1,4 +1,3 @@
-// TODO: Finish Passport Setup
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const pgPool = require('./database');
