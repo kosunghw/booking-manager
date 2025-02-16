@@ -22,24 +22,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Session setup
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      secure: true,
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    },
-  })
-);
-
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use(
   cors({
     origin: [
@@ -52,19 +34,27 @@ app.use(
   })
 );
 
+// Session setup
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'none',
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    },
+  })
+);
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Routes
 app.use('/api/auth', authRoutes); // Login / Logout routes
-
-// Routes that need authentication
-// app.use('/api/*', ensureAuthenticated);
-
-// // Debugging room route
-// app.use((req, res, next) => {
-//   console.log('Session:', req.session);
-//   console.log('User:', req.user);
-//   console.log('Authenticated:', req.isAuthenticated());
-//   next();
-// });
 
 app.use('/api/rooms', roomRoutes);
 

@@ -41,12 +41,10 @@ const strategy = new LocalStrategy(
 passport.use(strategy);
 
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user);
   done(null, user.user_id);
 });
 
 passport.deserializeUser(async (userId, done) => {
-  console.log('Deserializing userId:', userId);
   try {
     const res = await userModel.getById(userId);
     done(null, res); // Return the user object
