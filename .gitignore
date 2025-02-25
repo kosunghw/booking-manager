@@ -8,6 +8,3 @@ dist/
 
 # OS-specific files
 .DS_Store
-
-# Exclude screenshots
-screenshots/
