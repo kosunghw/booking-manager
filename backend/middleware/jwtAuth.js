@@ -18,10 +18,7 @@ const verifyToken = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Get user from database
     const user = await userModel.getById(decoded.id);

@@ -52,7 +52,7 @@ const authController = {
       // Generate JWT token
       const token = jwt.sign(
         { id: user.user_id, username: user.username },
-        process.env.JWT_SECRET || 'your-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
 
@@ -79,10 +79,7 @@ const authController = {
         return res.status(401).json({ message: 'No token provided' });
       }
 
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET || 'your-secret-key'
-      );
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       const user = await userModel.getById(decoded.id);
       if (!user) {
@@ -136,7 +133,14 @@ const authController = {
   },
 
   logout: async (req, res) => {
-    res.clearCookie('token');
+    // Clear the auth cookie with the same settings used to set it
+    res.clearCookie('_auth', {
+      path: '/',
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
+
     res.status(200).json({ message: 'Logged out successfully' });
   },
 };
