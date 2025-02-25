@@ -9,10 +9,13 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const authHeader = useAuthHeader();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    console.log('Auth header:', authHeader());
 
     try {
       const response = await axios.post(
