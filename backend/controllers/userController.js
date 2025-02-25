@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { generatePassword } = require('../config/passwordUtils');
 const userModel = require('../models/User');
 
@@ -81,30 +80,10 @@ const userController = {
     console.log('req.isAuthenticated():', req.isAuthenticated());
     console.log('req.cookies:', req.cookies);
     console.log('==================');
-
-    // Remove sensitive data from user object
     const { password_hash, created_at, ...safeUser } = req.user;
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: req.user.user_id, username: req.user.username },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '7d' }
-    );
-
-    // Set token in cookie for react-auth-kit
-    res.cookie('_auth', token, {
-      path: '/',
-      httpOnly: false, // Must be false so react-auth-kit can access it
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
     res.json({
       message: 'Login successful',
       user: safeUser,
-      token: token,
       isAuthenticated: req.isAuthenticated(),
     });
   },
@@ -115,6 +94,12 @@ const userController = {
         console.log('Logout Error:', err);
         return res.status(500).json({ message: 'Error logging out' });
       }
+      res.clearCookie('_auth', {
+        path: '/',
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      });
       res.clearCookie('userid');
       res.json({ message: 'Logged out successfully' });
     });
