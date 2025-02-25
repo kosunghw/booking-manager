@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useAuthHeader } from 'react-auth-kit';
 
 function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const authHeader = useAuthHeader();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -23,6 +24,7 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
         {
           headers: {
             'Content-Type': 'application/json',
+            Authorization: authHeader(),
           },
         }
       );

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import ColorPicker from './ColorPicker';
 import axios from 'axios';
+import { useAuthHeader } from 'react-auth-kit';
 
 export default function RoomModal({ setShowRoomModal, fetchRooms }) {
   const [roomNumber, setRoomNumber] = useState('');
   const [roomColor, setRoomColor] = useState('#FFFFFF');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const authHeader = useAuthHeader();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -23,6 +24,7 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
         {
           headers: {
             'Content-Type': 'application/json',
+            Authorization: authHeader(),
           },
         }
       );
