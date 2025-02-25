@@ -18,6 +18,9 @@ export default function Layout({ children }) {
         `https://booking-manager-43gf.onrender.com/api/users/logout`,
         {
           method: 'POST',
+          headers: {
+            Authorization: `Bearer ${auth().token}`,
+          },
           credentials: 'include',
         }
       );

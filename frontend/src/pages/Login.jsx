@@ -7,6 +7,7 @@ export default function Login() {
     username: '',
     password: '',
   });
+
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const signIn = useSignIn();
@@ -42,30 +43,26 @@ export default function Login() {
       );
 
       const data = await response.json();
-      // console.log('Login response:', data); // debug response
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
 
       const signInResult = signIn({
-        token: 'true',
+        token: data.token,
         expiresIn: 1000 * 60 * 60 * 24 * 7,
-        tokenType: 'Cookie',
+        tokenType: 'Bearer',
         authState: data.user,
       });
 
-      // console.log('SignIn result:', signInResult); // debug signIn
-
       if (signInResult) {
-        // Successful login
         navigate('/dashboard');
       } else {
         throw new Error('Sign in failed');
       }
     } catch (err) {
       setMessage(err.message);
-      console.error('Login error:', err); // debug errors
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
