@@ -7,7 +7,7 @@ const verifyToken = require('../middleware/jwtAuth');
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.get('/verify', authController.verifyToken);
-
+router.post('/logout', authController.logout);
 // Protected routes
 router.post('/change-password', verifyToken, authController.changePassword);
 

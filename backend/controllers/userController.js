@@ -73,38 +73,6 @@ const userController = {
     }
   },
 
-  login: (req, res) => {
-    console.log('=== Login Controller ===');
-    console.log('req.session:', req.session);
-    console.log('req.user:', req.user);
-    console.log('req.isAuthenticated():', req.isAuthenticated());
-    console.log('req.cookies:', req.cookies);
-    console.log('==================');
-    const { password_hash, created_at, ...safeUser } = req.user;
-    res.json({
-      message: 'Login successful',
-      user: safeUser,
-      isAuthenticated: req.isAuthenticated(),
-    });
-  },
-
-  logout: (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        console.log('Logout Error:', err);
-        return res.status(500).json({ message: 'Error logging out' });
-      }
-      res.clearCookie('_auth', {
-        path: '/',
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      });
-      res.clearCookie('userid');
-      res.json({ message: 'Logged out successfully' });
-    });
-  },
-
   deleteUser: async (req, res) => {
     try {
       console.log(req.user);

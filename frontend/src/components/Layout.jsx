@@ -16,7 +16,7 @@ export default function Layout({ children }) {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        `https://booking-manager-43gf.onrender.com/api/users/logout`,
+        `https://booking-manager-43gf.onrender.com/api/auth/logout`,
         {},
         {
           headers: {
