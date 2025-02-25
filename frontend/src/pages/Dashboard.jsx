@@ -30,6 +30,7 @@ export default function Dashboard() {
   const fetchRooms = async () => {
     setLoading(true);
     try {
+      console.log('Auth header:', authHeader());
       const response = await axios.get(`${API_BASE_URL}/rooms/my-rooms`, {
         headers: {
           Authorization: authHeader(),
