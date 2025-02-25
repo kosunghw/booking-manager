@@ -36,10 +36,11 @@ export default function Dashboard() {
         },
       });
 
-      setRooms(response.data);
+      setRooms(response.data || []);
     } catch (error) {
       console.error('Error fetching rooms:', error);
       setError(error.response?.data?.message || 'Failed to fetch rooms');
+      setRooms([]);
     } finally {
       setLoading(false);
     }
@@ -64,7 +65,7 @@ export default function Dashboard() {
       if (Array.isArray(data)) {
         setBookings(data);
       } else {
-        console.error('Unexpected data structure:', data);
+        console.warn('Unexpected data structure for bookings:', data);
         setBookings([]);
       }
     } catch (error) {
@@ -140,7 +141,13 @@ export default function Dashboard() {
         <div className='flex justify-between items-end'>
           {/* Legend on the left */}
           <div>
-            <RoomColorLegend rooms={rooms} onDeleteRoom={handleDelete} />
+            {rooms.length > 0 ? (
+              <RoomColorLegend rooms={rooms} onDeleteRoom={handleDelete} />
+            ) : (
+              <p className='text-gray-600'>
+                No rooms available. Add a room to get started.
+              </p>
+            )}
           </div>
 
           {/* Action buttons on the right */}
@@ -162,6 +169,7 @@ export default function Dashboard() {
                 backgroundColor: '#45503B',
                 color: '#F8BE5C',
               }}
+              disabled={rooms.length === 0}
             >
               New Booking
             </button>
