@@ -35,7 +35,7 @@ function RoomCalendar({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (bookings.length > 0) {
+    if (bookings.length > 0 && rooms.length > 0) {
       // Convert bookings into events for the calendar
       const convertedEvents = bookings.map((booking) => ({
         // title: `${booking.customer_name} (Room ${booking.room_number}). Phone: ${booking.phone_number}`,
@@ -55,7 +55,7 @@ function RoomCalendar({
       }));
       setEvents(convertedEvents);
     }
-  }, [bookings]);
+  }, [bookings, rooms]);
 
   const getColorFromId = (booking) => {
     const matchingRoom = rooms.find((room) => room.room_id === booking.room_id);
@@ -95,14 +95,14 @@ function RoomCalendar({
   }
 
   return (
-    <div className='p-4'>
+    <div className="p-4">
       <Calendar
         localizer={localizer}
         events={events}
-        defaultView='month' // Show full month view
+        defaultView="month" // Show full month view
         views={['month', 'week', 'day']} // Only show the month view
-        startAccessor='start'
-        endAccessor='end'
+        startAccessor="start"
+        endAccessor="end"
         style={{ height: 1000 }}
         eventPropGetter={eventStyleGetter} // Apply custom colors
         onSelectEvent={handleEventClick}
