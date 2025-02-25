@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthUser, useSignOut } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Layout({ children }) {
   const auth = useAuthUser();
@@ -14,22 +15,21 @@ export default function Layout({ children }) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `https://booking-manager-43gf.onrender.com/api/users/logout`,
+        {},
         {
-          method: 'POST',
           headers: {
             Authorization: `Bearer ${auth().token}`,
           },
-          credentials: 'include',
         }
       );
 
-      if (response.ok) {
+      if (response.status === 200) {
         signOut();
         navigate('/login');
       } else {
-        const errorData = await response.json();
+        const errorData = response.data;
         console.log('Response status:', response.status);
         console.log('Error data:', errorData);
         throw new Error(errorData.message || 'Logout failed');

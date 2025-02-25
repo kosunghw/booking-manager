@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ColorPicker from './ColorPicker';
+import axios from 'axios';
 
 export default function RoomModal({ setShowRoomModal, fetchRooms }) {
   const [roomNumber, setRoomNumber] = useState('');
@@ -13,31 +14,27 @@ export default function RoomModal({ setShowRoomModal, fetchRooms }) {
     setError('');
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `https://booking-manager-43gf.onrender.com/api/rooms`,
         {
-          method: 'POST',
+          roomNumber: roomNumber,
+          roomColor: roomColor,
+        },
+        {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include',
-          body: JSON.stringify({
-            roomNumber: roomNumber,
-            roomColor: roomColor,
-          }),
         }
       );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create room');
+      if (response.status === 201) {
+        await fetchRooms();
+        setRoomNumber('');
+        setShowRoomModal(false);
+        setRoomColor('#FFFFFF');
+      } else {
+        throw new Error(response.data.message || 'Failed to create room');
       }
-
-      await fetchRooms();
-      setRoomNumber('');
-      setShowRoomModal(false);
-      setRoomColor('#FFFFFF');
     } catch (error) {
       setError(error.message);
     } finally {

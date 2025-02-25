@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Register() {
   const [formValue, setFormValue] = useState({
@@ -35,31 +36,29 @@ export default function Register() {
 
     setLoading(true);
 
-    const allInputvalue = {
+    const userData = {
       username: formValue.username,
       password: formValue.password,
     };
 
     try {
-      const res = await fetch(
-        `https://booking-manager-43gf.onrender.com/api/users`,
-        {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(allInputvalue),
-        }
+      const response = await axios.post(
+        'https://booking-manager-43gf.onrender.com/api/auth/register',
+        userData
       );
 
-      const resjson = await res.json();
-      if (res.status === 201) {
+      if (response.status === 201) {
         setMessage('Registration successful! Redirecting to login...');
         // Redirect to login after successful registration
         setTimeout(() => navigate('/login'), 2000);
       } else {
-        setMessage(resjson.message || 'Registration failed');
+        setMessage(response.data.message || 'Registration failed');
       }
     } catch (error) {
-      setMessage('An error occurred during registration');
+      setMessage(
+        error.response?.data?.message || 'An error occurred during registration'
+      );
+      console.error('Registration error:', error);
     } finally {
       setLoading(false);
     }

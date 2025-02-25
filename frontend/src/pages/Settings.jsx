@@ -1,15 +1,15 @@
 // src/pages/Settings.jsx
 import { useState } from 'react';
-import { useSignOut, useAuthUser } from 'react-auth-kit';
+import { useSignOut, useAuthUser, useAuthHeader } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 export default function Settings() {
   const [isDeleting, setIsDeleting] = useState(false);
   const signOut = useSignOut();
   const navigate = useNavigate();
   const auth = useAuthUser();
   const username = auth()?.username;
-
+  const authHeader = useAuthHeader();
   const handleDeleteAccount = async () => {
     if (!window.confirm('Are you sure you want to delete your account?')) {
       return;
@@ -17,26 +17,28 @@ export default function Settings() {
 
     setIsDeleting(true);
     try {
-      const response = await fetch(
-        `https://booking-manager-43gf.onrender.com/api/users/delete`,
+      const response = await axios.delete(
+        'https://booking-manager-43gf.onrender.com/api/users/delete',
         {
-          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: authHeader(),
           },
-          credentials: 'include',
         }
       );
 
-      if (response.ok) {
+      if (response.status === 200) {
         signOut();
         navigate('/login');
       } else {
-        const error = await response.json();
-        alert(error.message || 'Failed to delete account');
+        alert(response.data.message || 'Failed to delete account');
       }
     } catch (error) {
-      alert('An error occurred while deleting your account');
+      console.error('Delete account error:', error);
+      alert(
+        error.response?.data?.message ||
+          'An error occurred while deleting your account'
+      );
     } finally {
       setIsDeleting(false);
     }

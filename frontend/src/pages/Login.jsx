@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSignIn, useIsAuthenticated } from 'react-auth-kit';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Login() {
   const [formValue, setFormValue] = useState({
@@ -13,6 +14,8 @@ export default function Login() {
   const signIn = useSignIn();
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/dashboard';
 
   useEffect(() => {
     // console.log(isAuthenticated);
@@ -32,36 +35,28 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `https://booking-manager-43gf.onrender.com/api/users/login`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(formValue),
-        }
+      const response = await axios.post(
+        'https://booking-manager-43gf.onrender.com/api/auth/login',
+        formValue
       );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
+      const { token, user } = response.data;
 
       const signInResult = signIn({
-        token: data.token,
+        token: token,
         expiresIn: 1000 * 60 * 60 * 24 * 7,
         tokenType: 'Bearer',
-        authState: data.user,
+        authState: user,
       });
 
       if (signInResult) {
-        navigate('/dashboard');
+        navigate(from, { replace: true });
       } else {
         throw new Error('Sign in failed');
       }
     } catch (err) {
-      setMessage(err.message);
+      const errorMessage = err.response?.data?.message || 'Login failed';
+      setMessage(errorMessage);
       console.error('Login error:', err);
     } finally {
       setLoading(false);
@@ -80,7 +75,7 @@ export default function Login() {
           Please sign in to your account
         </p>
         <p className='mt-2 text-center text-sm text-gray-600'>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link
             to='/register'
             className='font-medium hover:opacity-80'

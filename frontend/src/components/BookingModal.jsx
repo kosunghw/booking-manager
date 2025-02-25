@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
   const [formData, setFormData] = useState({
@@ -16,26 +17,22 @@ function BookingModal({ setShowBookingModal, rooms, fetchBookings }) {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `https://booking-manager-43gf.onrender.com/api/reservations`,
+        formData,
         {
-          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include',
-          body: JSON.stringify(formData),
         }
       );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create booking');
+      if (response.status === 201) {
+        await fetchBookings();
+        setShowBookingModal(false);
+      } else {
+        throw new Error(response.data.message || 'Failed to create booking');
       }
-
-      await fetchBookings();
-      setShowBookingModal(false);
     } catch (err) {
       setError(err.message);
     } finally {

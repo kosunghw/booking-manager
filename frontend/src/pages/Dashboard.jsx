@@ -1,6 +1,7 @@
-import { useIsAuthenticated } from 'react-auth-kit';
+import { useIsAuthenticated, useAuthHeader } from 'react-auth-kit';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 import RoomModal from '../components/RoomModal';
 import BookingModal from '../components/BookingModal';
 import RoomCalendar from '../components/RoomCalendar';
@@ -10,6 +11,7 @@ import RoomColorLegend from '../components/RoomColorLegend';
 
 export default function Dashboard() {
   const isAuthenticated = useIsAuthenticated();
+  const authHeader = useAuthHeader();
 
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -23,24 +25,21 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [bookings, setBookings] = useState([]);
 
+  const API_BASE_URL = 'https://booking-manager-43gf.onrender.com/api';
+
   const fetchRooms = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://booking-manager-43gf.onrender.com/api/rooms/my-rooms',
-        {
-          credentials: 'include',
-        }
-      );
+      const response = await axios.get(`${API_BASE_URL}/rooms/my-rooms`, {
+        headers: {
+          Authorization: authHeader(),
+        },
+      });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch rooms');
-      }
-
-      const data = await response.json();
-      setRooms(data);
+      setRooms(response.data);
     } catch (error) {
-      setError(error.message);
+      console.error('Error fetching rooms:', error);
+      setError(error.response?.data?.message || 'Failed to fetch rooms');
     } finally {
       setLoading(false);
     }
@@ -53,23 +52,14 @@ export default function Dashboard() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://booking-manager-43gf.onrender.com/api/reservations',
-        {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get(`${API_BASE_URL}/reservations`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader(),
+        },
+      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch bookings');
-      }
-
-      const data = await response.json();
+      const data = response.data;
 
       if (Array.isArray(data)) {
         setBookings(data);
@@ -78,12 +68,14 @@ export default function Dashboard() {
         setBookings([]);
       }
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('Error fetching bookings:', error);
+      setError(error.response?.data?.message || 'Failed to fetch bookings');
       setBookings([]);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -91,17 +83,11 @@ export default function Dashboard() {
   const handleDelete = async (roomId) => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
-        const response = await fetch(
-          `https://booking-manager-43gf.onrender.com/api/rooms/${roomId}`,
-          {
-            method: 'DELETE',
-            credentials: 'include',
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to delete room');
-        }
+        await axios.delete(`${API_BASE_URL}/rooms/${roomId}`, {
+          headers: {
+            Authorization: authHeader(),
+          },
+        });
 
         fetchRooms();
         fetchBookings();
@@ -114,17 +100,14 @@ export default function Dashboard() {
   const handleDeleteBooking = async () => {
     if (window.confirm('Are you sure you want to delete this room?')) {
       try {
-        const response = await fetch(
-          `https://booking-manager-43gf.onrender.com/api/reservations/${selectedEvent.resource.bookingId}`,
+        await axios.delete(
+          `${API_BASE_URL}/reservations/${selectedEvent.resource.bookingId}`,
           {
-            method: 'DELETE',
-            credentials: 'include',
+            headers: {
+              Authorization: authHeader(),
+            },
           }
         );
-
-        if (!response.ok) {
-          throw new Error('Failed to delete booking');
-        }
 
         setSelectedEvent(null);
         fetchBookings();

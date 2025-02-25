@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 function BookingEditModal({ setShowEditModal, selectedEvent, fetchBookings }) {
   const [formData, setFormData] = useState({
@@ -16,24 +17,15 @@ function BookingEditModal({ setShowEditModal, selectedEvent, fetchBookings }) {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://booking-manager-43gf.onrender.com/api/reservations/${selectedEvent.resource.bookingId}',
+      await axios.put(
+        `https://booking-manager-43gf.onrender.com/api/reservations/${selectedEvent.resource.bookingId}`,
+        formData,
         {
-          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include',
-          body: JSON.stringify(formData),
         }
       );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create booking');
-      }
-
       await fetchBookings();
       setShowEditModal(false);
     } catch (err) {

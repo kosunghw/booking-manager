@@ -9,12 +9,12 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Layout from './components/Layout.jsx';
 import Settings from './pages/Settings.jsx';
-
+import RequireAuth from './components/RequireAuth.jsx';
 const authConfig = {
   authType: 'cookie',
   authName: '_auth',
   cookieDomain: window.location.hostname,
-  cookieSecure: true,
+  cookieSecure: window.location.protocol === 'https:',
 };
 
 const router = createBrowserRouter([
@@ -33,17 +33,21 @@ const router = createBrowserRouter([
   {
     path: '/dashboard',
     element: (
-      <Layout>
-        <Dashboard />
-      </Layout>
+      <RequireAuth>
+        <Layout>
+          <Dashboard />
+        </Layout>
+      </RequireAuth>
     ),
   },
   {
     path: '/settings',
     element: (
-      <Layout>
-        <Settings />
-      </Layout>
+      <RequireAuth>
+        <Layout>
+          <Settings />
+        </Layout>
+      </RequireAuth>
     ),
   },
 ]);
